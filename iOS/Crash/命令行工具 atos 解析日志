@@ -1,0 +1,45 @@
+简书：https://juejin.im/post/6844903598011187213
+
+必须确保 .crash 和 .dSYM 文件是匹配的，才能正确符号化，匹配的条件就是它们的 UUID 一致。
+
+#获取 UUID
+
+.crash UUID
+
+执行：
+grep --after-context=2 "Binary Images:" *crash
+输出：
+T.crash:Binary Images:
+T.crash-0x7c000 - 0x87fff DreamDemo armv7  <d009f8671129397a8aab9cb2b8e506ff> /var/containers/Bundle/Application/DEEBE571-D512-4E8F-B712-ED4D19CE64F9/DreamDemo.app/DreamDemo
+T.crash-0xa9000 - 0xd4fff dyld armv7s  <cd60ff3403063c0aa8e54dff11e42527> /usr/lib/dyld
+
+看到上面的输出 d009f8671129397a8aab9cb2b8e506ff 就是 DreamDemo 项目的 UUID。
+
+.dSYM UUID
+
+执行：
+dwarfdump --uuid DreamDemo.app.dSYM
+输出：
+UUID: D009F867-1129-397A-8AAB-9CB2B8E506FF (armv7) DreamDemo.app.dSYM/Contents/Resources/DWARF/DreamDemo
+
+.app UUID
+
+执行：
+dwarfdump --uuid DreamDemo.app/DreamDemo
+输出：
+UUID: D009F867-1129-397A-8AAB-9CB2B8E506FF (armv7) DreamDemo.app/DreamDemo
+
+#atos 解析
+
+使用 .dSYM
+执行：
+xcrun atos -o DreamDemo.app.dSYM/Contents/Resources/DWARF/DreamDemo -arch armv7 -l 0x7c000
+输入对应堆栈次序的地址数据（如 3   DreamDemo                     	0x0008088e 0x7c000 + 18574，则输入0x0008088e）
+
+使用 .app
+执行：
+xcrun atos -o DreamDemo.app/DreamDemo -arch armv7 -l 0x7c000
+输入对应堆栈次序的地址数据（如 3   DreamDemo                     	0x0008088e 0x7c000 + 18574，则输入0x0008088e）
+
+使用 https://github.com/smilelistener/dSYMTools 解析
+
