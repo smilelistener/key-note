@@ -1,0 +1,14 @@
+简书：https://juejin.im/post/6844903703468572686
+
+对于频繁操作（比如通信软件的内容气泡展示），尽量使用 Struct 替代 Class，因为栈内存分配更快，更安全，操作更快。
+
+在使用结构体时：
+通过使用精确类型，例如 UUID 替代 String（UUID 字节长度固定 128 字节，而不是 String 任意长度），这样就可以进行内存内联，在栈内存储 UUID，我们知道，栈内存管理更快更安全，并且不需要引用计数。
+Enum 替代 String，在栈内管理内存，无引用计数，并且从语法上对于开发者更友好。
+
+使用 Static dispatch 代替 Dynamic dispatch 提升性能，我们知道 Static dispatch 快于 Dynamic dispatch，如何在开发中去尽可能使用 Static dispatch。
+inheritance constraints 继承约束，我们可以使用 final 关键字去修饰 Class，以此生成的 Final class，使用 Static dispatch。
+access control 访问控制，private 关键字修饰，使得方法或属性只对当前类可见。编译器会对方法进行 Static dispatch。
+
+我们常见的关键字 @ObjC 并不会改变 Swift 原有的方法分派机制，关键字 @ObjC 的作用只是告诉编译器，该段代码对于 OC 可见。
+Swift 可以通过关键字 dynamic 对方法进行标记，这样就会告诉编译器，此方法使用的是 OC 的运行时机制。
